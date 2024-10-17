@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GildedRoseKata;
 
@@ -13,77 +14,94 @@ public class GildedRose
 
     public void UpdateQuality()
     {
-        for (var i = 0; i < Items.Count; i++)
+        var itemsToUpdate = Items.Where(i => !i.Name.Contains("Sulfuras"));
+
+        foreach (var item in itemsToUpdate)
         {
-            if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-            {
-                if (Items[i].Quality > 0)
-                {
-                    if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                    {
-                        Items[i].Quality = Items[i].Quality - 1;
-                    }
-                }
-            }
-            else
-            {
-                if (Items[i].Quality < 50)
-                {
-                    Items[i].Quality = Items[i].Quality + 1;
+            item.SellIn--;
 
-                    if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (Items[i].SellIn < 11)
-                        {
-                            if (Items[i].Quality < 50)
-                            {
-                                Items[i].Quality = Items[i].Quality + 1;
-                            }
-                        }
-
-                        if (Items[i].SellIn < 6)
-                        {
-                            if (Items[i].Quality < 50)
-                            {
-                                Items[i].Quality = Items[i].Quality + 1;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
+            switch (item.Name)
             {
-                Items[i].SellIn = Items[i].SellIn - 1;
-            }
+                case string name when name.Contains("Aged Brie"):
+                    item.Quality = GetAgedBrieQualityUpdated(item);
+                    break;
 
-            if (Items[i].SellIn < 0)
-            {
-                if (Items[i].Name != "Aged Brie")
-                {
-                    if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (Items[i].Quality > 0)
-                        {
-                            if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                            {
-                                Items[i].Quality = Items[i].Quality - 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-                    }
-                }
+                case string name when name.Contains("Backstage pass"):
+                    item.Quality = GetBackstagePassQualityUpdated(item);
+                    break;
+
+                case string name when name.Contains("Conjured"):
+                    item.Quality = GetConjuredItemQualityUpdated(item);
+                    break;
+
+                default:
+                    
+                    item.Quality = GetDefaultItemQualityUpdated(item);
+                    break;
             }
         }
+    }
+
+    private int GetDefaultItemQualityUpdated(Item item)
+    {
+        if (item.Quality == 0)
+        {
+            return 0;
+        }
+
+        if (item.SellIn < 0)
+        {
+            return item.Quality >= 2 ? item.Quality - 2 : 0;
+        }
+
+        return item.Quality > 0 ? item.Quality - 1 : 0;
+    }
+
+    private int GetAgedBrieQualityUpdated(Item item)
+    {
+        if (item.Quality == 50)
+        {
+            return 50;
+        }
+
+        return item.Quality + 1;
+    }
+
+    private int GetBackstagePassQualityUpdated(Item item)
+    {
+        if (item.SellIn < 0)
+        {
+            return 0;
+        }
+
+        if (item.Quality == 50)
+        {
+            return 50;
+        }
+
+        switch (item.SellIn)
+        {
+            case int sellIn when sellIn <= 5:
+
+                return item.Quality <= 47 ? item.Quality + 3 : 50;
+
+            case int sellIn when sellIn <= 10:
+
+                return item.Quality <= 48 ? item.Quality + 2 : 50;
+
+            default:
+
+                return item.Quality + 1;
+        }
+    }
+
+    private int GetConjuredItemQualityUpdated(Item item)
+    {
+        if (item.Quality == 0)
+        {
+            return 0;
+        }
+
+        return item.Quality >= 2 ? item.Quality - 2 : 0;
     }
 }
