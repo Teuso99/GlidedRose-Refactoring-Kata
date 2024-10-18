@@ -64,6 +64,11 @@ public class GildedRose
             return 50;
         }
 
+        if (item.SellIn < 0)
+        {
+            return item.Quality <= 48 ? item.Quality + 2 : 50;
+        }
+
         return item.Quality + 1;
     }
 
@@ -81,11 +86,11 @@ public class GildedRose
 
         switch (item.SellIn)
         {
-            case int sellIn when sellIn <= 5:
+            case int sellIn when sellIn < 5:
 
                 return item.Quality <= 47 ? item.Quality + 3 : 50;
 
-            case int sellIn when sellIn <= 10:
+            case int sellIn when sellIn < 10:
 
                 return item.Quality <= 48 ? item.Quality + 2 : 50;
 
@@ -100,6 +105,11 @@ public class GildedRose
         if (item.Quality == 0)
         {
             return 0;
+        }
+
+        if (item.SellIn < 0)
+        {
+            return item.Quality >= 4 ? item.Quality - 4 : 0;
         }
 
         return item.Quality >= 2 ? item.Quality - 2 : 0;

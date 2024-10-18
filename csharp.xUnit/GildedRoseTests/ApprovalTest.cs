@@ -11,6 +11,11 @@ using Xunit;
 
 namespace GildedRoseTests;
 
+
+/// <summary>
+/// This is a regression test you can use to validate if your actions impacted Glided Rose's system.
+/// The expected result after the refactoring and implementation of the new feature is to have changes only in the "Conjured" itens Quality
+/// </summary>
 public class ApprovalTest
 {
     [Fact]
