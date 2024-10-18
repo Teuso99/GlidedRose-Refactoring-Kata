@@ -62,6 +62,17 @@ public class GildedRoseTest
     }
 
     [Fact]
+    public void UpdateQuality_AgedBrie_PastSellInDate_IncreaseQualityTwice()
+    {
+        IList<Item> Items = new List<Item> { new Item { Name = "Aged Brie", SellIn = 0, Quality = 0 } };
+        GildedRose app = new GildedRose(Items);
+
+        app.UpdateQuality();
+
+        Assert.Equal(2, Items[0].Quality);
+    }
+
+    [Fact]
     public void UpdateQuality_AnyItem_ShouldNeverIncreaseQualityPastFifty()
     {
         IList<Item> Items = new List<Item> { new Item { Name = "Aged Brie", SellIn = 2, Quality = 50 } };
@@ -100,7 +111,7 @@ public class GildedRoseTest
         IList<Item> Items = new List<Item> { new Item
             {
                 Name = "Backstage passes to a TAFKAL80ETC concert",
-                SellIn = 15,
+                SellIn = 11,
                 Quality = 20
             } };
 
@@ -112,7 +123,7 @@ public class GildedRoseTest
     }
 
     [Fact]
-    public void UpdateQuality_BackstagePasses_TenDaysOrLessForSellInDate_IncreaseQualityTwice()
+    public void UpdateQuality_BackstagePasses_LessThanTenDaysForSellInDate_IncreaseQualityTwice()
     {
         IList<Item> Items = new List<Item> { new Item
             {
@@ -129,7 +140,7 @@ public class GildedRoseTest
     }
 
     [Fact]
-    public void UpdateQuality_BackstagePasses_FiveDaysOrLessForSellInDate_IncreaseQualityThreeTimes()
+    public void UpdateQuality_BackstagePasses_LessThanFiveDaysForSellInDate_IncreaseQualityThreeTimes()
     {
         IList<Item> Items = new List<Item> { new Item
             {
@@ -171,5 +182,16 @@ public class GildedRoseTest
         app.UpdateQuality();
 
         Assert.Equal(4, Items[0].Quality);
+    }
+
+    [Fact]
+    public void UpdateQuality_ConjuredItem_PastSellInDate_DecreaseQualityTwiceAsDefault()
+    {
+        IList<Item> Items = new List<Item> { new Item { Name = "Conjured Mana Cake", SellIn = 0, Quality = 6 } };
+        GildedRose app = new GildedRose(Items);
+
+        app.UpdateQuality();
+
+        Assert.Equal(2, Items[0].Quality);
     }
 }
